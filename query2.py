@@ -1,6 +1,7 @@
 __author__ = 'Saksham'
 
 import py2neo
+from operator import itemgetter
 from py2neo import neo4j, node, rel, cypher
 
 
@@ -14,8 +15,8 @@ def main():
 
     birthdays = graph_db.get_or_create_index(neo4j.Node, "Birthdays")
 
-    d = 724039
-    k = 3
+    d = 725546
+    k = 7
 
     # get hold of all nodes with birthday > d
     q1 = "birthday:[" + str(d) + " TO 735311]"
@@ -28,18 +29,18 @@ def main():
     q2 = "START i=node:Interest('*:*') return distinct i"
     res2 = list(neo4j.CypherQuery(graph_db, q2).execute())
 
-    ranges_for_interests = {}
+    ranges_for_interests = []
     for node_interest in res2:
         interest_node = node_interest.i
         connected_components = func(interest_node, valid_birthday_nodes_set, graph_db)
         range_of_tag = find_largest_connected_component(connected_components)
-        ranges_for_interests[interest_node] = range_of_tag
+        ranges_for_interests.append((-1*range_of_tag, interest_node["name"]))
 
-    desc_sorted_ranges = sorted(ranges_for_interests, key=lambda x: ranges_for_interests[x], reverse=True)
+    desc_sorted_ranges = sorted(ranges_for_interests, key=itemgetter(0, 1))
 
     print_str = ""
     for i in range(0, k):
-        print_str += "=> %s " % desc_sorted_ranges[i]["name"]
+        print_str += "=> %s-%d \n" % (desc_sorted_ranges[i][1], -1*desc_sorted_ranges[i][0])
     print print_str
 
     pass
