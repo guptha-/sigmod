@@ -1,0 +1,10 @@
+Chiang_Kai-shek Augustine_of_Hippo Napoleon % component sizes 22 16 16
+Chiang_Kai-shek Napoleon Mohandas_Karamchand_Gandhi Sukarno % component sizes 17 13 11 11
+Chiang_Kai-shek Mohandas_Karamchand_Gandhi Napoleon % component sizes 13 11 10
+Chiang_Kai-shek Mohandas_Karamchand_Gandhi Augustine_of_Hippo % component sizes 12 10 8
+Chiang_Kai-shek Aristotle Mohandas_Karamchand_Gandhi Augustine_of_Hippo Fidel_Castro % component sizes 10 7 6 5 5
+Chiang_Kai-shek Mohandas_Karamchand_Gandhi Joseph_Stalin % component sizes 6 6 5
+Chiang_Kai-shek Mohandas_Karamchand_Gandhi Joseph_Stalin % component sizes 6 6 5
+Chiang_Kai-shek Augustine_of_Hippo Genghis_Khan Haile_Selassie_I Karl_Marx Lyndon_B._Johnson Robert_John_\"Mutt\"_Lange % component sizes 4 3 3 3 3 3 3
+Aristotle Ho_Chi_Minh Karl_Marx % component sizes 2 2 2
+Arthur_Conan_Doyle Ashoka Barack_Obama Benito_Mussolini % component sizes 1 1 1 1

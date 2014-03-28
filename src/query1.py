@@ -3,16 +3,16 @@ __author__ = 'Saksham'
 import py2neo
 from py2neo import neo4j, node, rel, cypher
 
-def main():
+
+def main(start_id_str, end_id_str, k_str):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
 
     people = graph_db.get_or_create_index(neo4j.Node, "People")
     comments = graph_db.get_or_create_index(neo4j.Node, "Comments")
 
-
-    start_id = 814
-    end_id = 641
-    k = 0
+    start_id = int(start_id_str)
+    end_id = int(end_id_str)
+    k = int(k_str)
     people_nodes = 998
 
     q1 = "START n=node:People('id:" + str(start_id) + "') return n"
@@ -26,7 +26,7 @@ def main():
     #x = "MATCH (start {id:" + str(start_id) + ",type:\"Person\"}), (end {id:" + str(
      #   end_id) + ",type:\"Person\"}), p=shortestPath((start)-[:KNOWS*]-(end)) RETURN p"
 
-    print("Shortest path satisfying comment constraints: " + path_final)
+    print path_final
 
     pass
 
@@ -141,4 +141,4 @@ def Is_Frequent_Communication_Edge(node1, node2, graph_db, k):
 
 
 if __name__ == '__main__':
-    main()
+    main(814, 641, 0)

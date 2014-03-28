@@ -16,13 +16,13 @@ def main():
 
     batch = neo4j.WriteBatch(graph_db)
 
-    with open('person.csv') as res:
+    with open('../data/person.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
         lines = lines[1:]
 
-    with open('person_hasInterest_tag.csv') as res:
+    with open('../data/person_hasInterest_tag.csv') as res:
         content = res.read()
         lines1 = content.split('\n')
         lines1 = [x for x in lines1 if x is not '']
@@ -84,7 +84,7 @@ def main():
 
 def add_names_of_interest_tags_to_nodes(batch, interest_tags):
 
-    with open('tag.csv') as res:
+    with open('../data/tag.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']

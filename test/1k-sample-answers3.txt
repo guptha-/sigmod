@@ -1,0 +1,10 @@
+361|812 174|280 280|812 % common interest counts 4 3 3
+396|398 363|367 363|368 363|372 % common interest counts 2 1 1 1
+110|116 106|110 106|112 % common interest counts 1 0 0
+420|825 421|424 10|414 % common interest counts 1 1 0
+590|650 590|658 590|614 590|629 590|638 % common interest counts 1 1 0 0 0
+65|766 65|767 65|863 % common interest counts 0 0 0
+99|100 99|101 99|102 % common interest counts 0 0 0
+891|898 890|891 890|895 890|898 890|902 891|895 891|902 % common interest counts 1 0 0 0 0 0 0
+565|625 653|726 565|653 % common interest counts 2 1 0
+795|798 797|798 567|795 567|796 % common interest counts 1 1 0 0

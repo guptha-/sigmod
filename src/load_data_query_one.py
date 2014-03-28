@@ -16,7 +16,7 @@ def main():
 
     batch = neo4j.WriteBatch(graph_db)
 
-    with open('person_knows_person.csv') as res:
+    with open('../data/person_knows_person.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -60,7 +60,7 @@ def main():
     # #######################################################################
     #
     uniq_comments = {}
-    with open('comment_hasCreator_person.csv') as res:
+    with open('../data/comment_hasCreator_person.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -123,7 +123,7 @@ def main():
 
     #######################################################################
 
-    with open('comment_replyOf_comment.csv') as res:
+    with open('../data/comment_replyOf_comment.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']

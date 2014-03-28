@@ -3,7 +3,7 @@ __author__ = 'Saksham'
 from operator import itemgetter
 from py2neo import neo4j
 
-def main():
+def main(hops_str, k_str, p):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
 
     people = graph_db.get_or_create_index(neo4j.Node, "People")
@@ -12,9 +12,8 @@ def main():
 
     places = graph_db.get_or_create_index(neo4j.Node, "Place")
 
-    hops = 4
-    k = 5
-    p = 'Chengdu'
+    hops = int(hops_str)
+    k = int(k_str)
 
     # get all nodes that have anything to do with Asia
     place_node = places.get("name", p)
@@ -167,4 +166,4 @@ def Locate_people_given_place_id(place_id, graph_db):
 
 
 if __name__ == '__main__':
-    main()
+    main(4,5,'Chengdu')
