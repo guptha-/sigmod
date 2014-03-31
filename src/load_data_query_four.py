@@ -17,7 +17,7 @@ def main():
 
     batch2 = neo4j.ReadBatch(graph_db)
 
-    with open('forum.csv') as res:
+    with open('../data/forum.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -34,7 +34,7 @@ def main():
     batch.clear()
 
     #create tag->forum edges
-    with open('forum_hasTag_tag.csv') as res:
+    with open('../data/forum_hasTag_tag.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -57,7 +57,7 @@ def main():
     batch.clear()
 
     # create people->forum edges
-    with open('forum_hasMember_person.csv') as res:
+    with open('../data/forum_hasMember_person.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
