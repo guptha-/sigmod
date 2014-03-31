@@ -1,11 +1,12 @@
 __author__ = 'Saksham'
 
+import sys
 import py2neo
 from operator import itemgetter
 from py2neo import neo4j, node, rel, cypher
 
 
-def main():
+def main(d_str, k_str):
     global range_of_tag
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
 
@@ -15,9 +16,8 @@ def main():
 
     birthdays = graph_db.get_or_create_index(neo4j.Node, "Birthdays")
 
-    d = 725546
-    k = 7
-
+    d = int(d_str)
+    k = int(k_str)
     # get hold of all nodes with birthday > d
     q1 = "birthday:[" + str(d) + " TO 735311]"
     valid_birthday_nodes = list(birthdays.query(q1))
@@ -96,6 +96,7 @@ def bfs_per_node(start_person, final_people_nodes, graph_db):
             traversed_nodes.add(neighbor)
 
     return list(traversed_nodes)
+
 
 def find_largest_connected_component(connected_components):
 

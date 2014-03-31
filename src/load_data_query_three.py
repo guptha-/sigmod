@@ -13,7 +13,7 @@ def main():
 
     batch = neo4j.WriteBatch(graph_db)
 
-    with open('place.csv') as res:
+    with open('../data/place.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -49,7 +49,7 @@ def main():
 
     ################################################################################
 
-    with open('place_isPartOf_place.csv') as res:
+    with open('../data/place_isPartOf_place.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -69,7 +69,7 @@ def main():
 
     #####################################################################################
 
-    with open('person_isLocatedIn_place.csv') as res:
+    with open('../data/person_isLocatedIn_place.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -92,7 +92,7 @@ def main():
     person_work_org_map = {}
     org_place_map = {}
 
-    with open('person_studyAt_organisation.csv') as res:
+    with open('../data/person_studyAt_organisation.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -104,7 +104,7 @@ def main():
         study_org_id = int(parts[1])
         person_study_org_map[person_id] = study_org_id
 
-    with open('person_workAt_organisation.csv') as res:
+    with open('../data/person_workAt_organisation.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -116,7 +116,7 @@ def main():
         work_org_id = int(parts[1])
         person_work_org_map[person_id] = work_org_id
 
-    with open('organisation_isLocatedIn_place.csv') as res:
+    with open('../data/organisation_isLocatedIn_place.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']

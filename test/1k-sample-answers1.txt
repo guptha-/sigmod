@@ -1,0 +1,10 @@
+3 % path 576-618-951-400 (other shortest paths may exist)
+3 % path 58-935-808-402 (other shortest paths may exist)
+3 % path 266-23-592-106 (other shortest paths may exist)
+-1 % path none
+4 % path 858-46-31-162-587 (other shortest paths may exist)
+3 % path 155-21-0-355 (other shortest paths may exist)
+2 % path 947-625-771 (other shortest paths may exist)
+-1 % path none
+3 % path 128-459-76-751 (other shortest paths may exist)
+3 % path 814-109-557-641 (other shortest paths may exist)
