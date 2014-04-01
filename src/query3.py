@@ -49,6 +49,8 @@ def main(hops_str, k_str, p):
 
     for (n1, n2, common_tags) in final_couples:
         print "%s|%s have %d common interests" % (n1, n2, common_tags)
+
+    print "\n"
     pass
 
 

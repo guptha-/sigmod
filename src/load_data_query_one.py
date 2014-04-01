@@ -30,12 +30,16 @@ def main():
 
         if not uniq_pids.has_key(first):
             uniq_pids[first] = True
+            batch.get_or_create_in_index(neo4j.Node, "People", "id", first, {"id": first, "type": "Person"})
         if not uniq_pids.has_key(second):
             uniq_pids[second] = True
+            batch.get_or_create_in_index(neo4j.Node, "People", "id", second, {"id": second, "type": "Person"})
 
-    print "Started people nodes . . .\n"
-    for key in uniq_pids:
-        batch.get_or_create_in_index(neo4j.Node, "People", "id", key, {"id": key, "type": "Person"})
+        #batch.create(rel(a, "KNOWS", b))
+
+    # print "Started people nodes . . .\n"
+    # for key in uniq_pids:
+    #     batch.get_or_create_in_index(neo4j.Node, "People", "id", key, {"id": key, "type": "Person"})
 
     del uniq_pids
     batch.run()

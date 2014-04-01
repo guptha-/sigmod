@@ -3,14 +3,13 @@ __author__ = 'Saksham'
 from py2neo import neo4j
 
 
-def main():
+def main(k_str, interest_tag_name):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
     people = graph_db.get_or_create_index(neo4j.Node, "People")
     interest_tags = graph_db.get_or_create_index(neo4j.Node, "Interest")
     forums = graph_db.get_or_create_index(neo4j.Node, "Forum")
 
-    k = 3
-    interest_tag_name = 'Bill_Clinton'
+    k = int(k_str)
 
     # get the tag node
     q1 = "START n=node:Interest('*:*') where n.name='" + interest_tag_name + "' RETURN n"
@@ -75,4 +74,4 @@ def bfs(person_node, valid_people_nodes, graph_db):
 
 
 if __name__ == '__main__':
-    main()
+    main(3, 'Bill Clinton')

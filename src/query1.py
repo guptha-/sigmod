@@ -23,11 +23,17 @@ def main(start_id_str, end_id_str, k_str):
     end_node = res2[0].n
     path_final = bfs(start_node,end_node,graph_db,k)
 
-    #x = "MATCH (start {id:" + str(start_id) + ",type:\"Person\"}), (end {id:" + str(
-     #   end_id) + ",type:\"Person\"}), p=shortestPath((start)-[:KNOWS*]-(end)) RETURN p"
+    x = "MATCH (start {id:" + str(start_id) + ",type:\"Person\"}), (end {id:" + str(
+       end_id) + ",type:\"Person\"}), p=shortestPath((start)-[:KNOWS*]-(end)) RETURN p"
 
-    print path_final
-
+    print_string = ""
+    if path_final != None:
+        for node_in_path in path_final:
+            print_string += str(node_in_path["id"]) + "->"
+        act_string = print_string[:-2]
+        print act_string + "\n"
+    else:
+        print "None\n"
     pass
 
 def bfs(start_node, end_node, graph_db, k):

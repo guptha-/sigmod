@@ -3,6 +3,7 @@ __author__ = 'Saksham'
 
 from py2neo import neo4j, rel
 
+
 def main():
 
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
