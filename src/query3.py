@@ -39,6 +39,8 @@ def main(k_str, hops_str, p):
     ctr = 0
     iterator = 0
     while ctr < k:
+        if (iterator >= desc_sorted_interests.__len__()):
+            break
         node1_id = desc_sorted_interests[iterator][0]
         node2_id = desc_sorted_interests[iterator][1]
         common_tags = -1*desc_sorted_interests[iterator][2]
@@ -47,6 +49,8 @@ def main(k_str, hops_str, p):
             ctr += 1
         iterator += 1
 
+    if final_couples.__len__() == 0:
+        print "There are no pairs with a path between them"
     for (n1, n2, common_tags) in final_couples:
         print "%s|%s have %d common interests" % (n1, n2, common_tags)
 
@@ -168,4 +172,4 @@ def Locate_people_given_place_id(place_id, graph_db):
 
 
 if __name__ == '__main__':
-    main(3,2,'Asia')
+    main(3,2,'Peru')

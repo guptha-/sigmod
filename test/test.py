@@ -20,28 +20,28 @@ def main():
     #load_data.main(timerfile)
     timerfile.write("Total loading time " + str(time.time() - inittime) + '\n\n')
 
-    # initqfulltime = time.time()
-    # sys.stdout = open('currents/q1out', 'w')
-    # q1 = getqueryargsmaybeminus("1k-sample-queries1.txt")
-    # for arg in q1:
-    #     initindiv = time.time()
-    #     query1.main(arg[0], arg[1], arg[2])
-    #     timerfile.write('Query 1 ' + arg[0] + ' ' + arg[1] + ' ' + arg[2] + ' time ' + str(time.time() - initindiv) \
-    #                     + '\n')
-    # sys.stdout.close()
-    # timerfile.write('Total q1 time ' + str(time.time() - initqfulltime) + '\n\n')
-    #
-    # initqfulltime = time.time()
-    # sys.stdout = open('currents/q2out', 'w')
-    # q2 = getqueryargsnominus("1k-sample-queries2.txt")
-    # for arg in q2:
-    #     initindiv = time.time()
-    #     absolute_day = datetime.date(int(arg[1]), int(arg[2]), int(arg[3])).toordinal()
-    #     query2.main(absolute_day, arg[0])
-    #     timerfile.write('Query 2 ' + arg[0] + ' ' + str(absolute_day) + ' time ' + str(time.time() - initindiv) \
-    #                     + '\n')
-    # sys.stdout.close()
-    # timerfile.write('Total q2 time ' + str(time.time() - initqfulltime) + '\n\n')
+    initqfulltime = time.time()
+    sys.stdout = open('currents/q1out', 'w')
+    q1 = getqueryargsmaybeminus("1k-sample-queries1.txt")
+    for arg in q1:
+        initindiv = time.time()
+        query1.main(arg[0], arg[1], arg[2])
+        timerfile.write('Query 1 ' + arg[0] + ' ' + arg[1] + ' ' + arg[2] + ' time ' + str(time.time() - initindiv) \
+                        + '\n')
+    sys.stdout.close()
+    timerfile.write('Total q1 time ' + str(time.time() - initqfulltime) + '\n\n')
+
+    initqfulltime = time.time()
+    sys.stdout = open('currents/q2out', 'w')
+    q2 = getqueryargsnominus("1k-sample-queries2.txt")
+    for arg in q2:
+        initindiv = time.time()
+        absolute_day = datetime.date(int(arg[1]), int(arg[2]), int(arg[3])).toordinal()
+        query2.main(absolute_day, arg[0])
+        timerfile.write('Query 2 ' + arg[0] + ' ' + str(absolute_day) + ' time ' + str(time.time() - initindiv) \
+                        + '\n')
+    sys.stdout.close()
+    timerfile.write('Total q2 time ' + str(time.time() - initqfulltime) + '\n\n')
 
     initqfulltime = time.time()
     sys.stdout = open('currents/q3out', 'w')
@@ -54,16 +54,16 @@ def main():
     sys.stdout.close()
     timerfile.write('Total q3 time ' + str(time.time() - initqfulltime) + '\n\n')
 
-    # initqfulltime = time.time()
-    # sys.stdout = open('currents/q4out', 'w')
-    # q4 = getqueryargsnominus("1k-sample-queries4.txt")
-    # for arg in q4:
-    #     initindiv = time.time()
-    #     query4.main(arg[0], arg[1])
-    #     timerfile.write('Query 4 ' + arg[0] + ' ' + arg[1] + ' time ' + str(time.time() - initindiv) \
-    #                     + '\n')
-    # sys.stdout.close()
-    # timerfile.write('Total q4 time ' + str(time.time() - initqfulltime) + '\n\n')
+    initqfulltime = time.time()
+    sys.stdout = open('currents/q4out', 'w')
+    q4 = getqueryargsnominus("1k-sample-queries4.txt")
+    for arg in q4:
+        initindiv = time.time()
+        query4.main(arg[0], arg[1])
+        timerfile.write('Query 4 ' + arg[0] + ' ' + arg[1] + ' time ' + str(time.time() - initindiv) \
+                        + '\n')
+    sys.stdout.close()
+    timerfile.write('Total q4 time ' + str(time.time() - initqfulltime) + '\n\n')
 
     sys.stdout = open('currents/report', 'w')
     filecmp.dircmp('actuals', 'currents').report()
