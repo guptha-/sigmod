@@ -29,6 +29,7 @@ def main():
         lines = lines[1:]
 
 
+    tmp_people = set()
     start_time = time.clock()
     ctr = 0
     print "Started KNOWS edges . . .\n"
@@ -40,10 +41,6 @@ def main():
         batch.get_or_create_in_index(neo4j.Node, "People_TMP", "id", first, {"id": first, "type": "Person"})
         batch.get_or_create_in_index(neo4j.Node, "People_TMP", "id", second, {"id": second, "type": "Person"})
 
-        #a = people.get("id", first)
-        #b = people.get("id", second)
-
-        #batch.create(rel(0, "KNOWS", 1))
         ctr += 1
         if ctr > 10000:
             xx = batch.submit()
@@ -51,14 +48,18 @@ def main():
             while len(xx) > 0:
                 v1 = xx.pop(0)
                 v2 = xx.pop(0)
-                #batch.create(rel(v1, "KNOWS", v2))
-                #print "%d, %d" % (v1._id, v2._id)
                 batch.append_cypher("START n=node(" + str(v1._id) + "), t=node(" + str(v2._id) + ") CREATE (n)-[:KNOWS]->(t)")
             batch.run()
             batch.clear()
             ctr = 0
             print "10,000 batch done..."
 
+    xx = batch.submit()
+    batch.clear()
+    while len(xx) > 0:
+        v1 = xx.pop(0)
+        v2 = xx.pop(0)
+        batch.append_cypher("START n=node(" + str(v1._id) + "), t=node(" + str(v2._id) + ") CREATE (n)-[:KNOWS]->(t)")
     batch.run()
     batch.clear()
     end_time = time.clock()
@@ -66,7 +67,6 @@ def main():
 
     # #######################################################################
     #
-    uniq_comments = {}
     with open('../data/comment_hasCreator_person.csv') as res:
         content = res.read()
         lines = content.split('\n')
@@ -90,12 +90,17 @@ def main():
             while len(xx) > 0:
                 v1 = xx.pop(0)
                 v2 = xx.pop(0)
-                #batch.create(rel(v1, "COMMENTED", v2))
                 batch.append_cypher("START n=node(" + str(v1._id) + "), t=node(" + str(v2._id) + ") CREATE (n)-[:COMMENTED]->(t)")
             batch.run()
             batch.clear()
             ctr = 0
             print "Done 10,000 batch..."
+    xx = batch.submit()
+    batch.clear()
+    while len(xx) > 0:
+        v1 = xx.pop(0)
+        v2 = xx.pop(0)
+        batch.append_cypher("START n=node(" + str(v1._id) + "), t=node(" + str(v2._id) + ") CREATE (n)-[:COMMENTED]->(t)")
     batch.run()
     batch.clear()
     end_time = time.clock()
@@ -131,6 +136,12 @@ def main():
             batch.clear()
             ctr = 0
             print "Done 10,000 batch..."
+    xx = batch.submit()
+    batch.clear()
+    while len(xx) > 0:
+        v1 = xx.pop(0)
+        v2 = xx.pop(0)
+        batch.append_cypher("START n=node(" + str(v1._id) + "), t=node(" + str(v2._id) + ") CREATE (n)-[:REPLY_OF]->(t)")
     batch.run()
     batch.clear()
     end_time = time.clock()
