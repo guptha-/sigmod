@@ -4,6 +4,7 @@ import sys
 import py2neo
 from operator import itemgetter
 from py2neo import neo4j, node, rel, cypher
+import datetime, time
 
 
 def main(d_str, k_str):
@@ -16,6 +17,7 @@ def main(d_str, k_str):
 
     birthdays = graph_db.get_or_create_index(neo4j.Node, "Birthdays")
 
+    start_time  = time.clock()
     d = int(d_str)
     k = int(k_str)
     # get hold of all nodes with birthday > d
@@ -38,6 +40,8 @@ def main(d_str, k_str):
 
     desc_sorted_ranges = sorted(ranges_for_interests, key=itemgetter(0, 1))
 
+    end_time = time.clock()
+    print "Time takes %s seconds..." % str(end_time - start_time)
     print_str = ""
     for i in range(0, k):
         print_str += "=> %s-%d \n" % (desc_sorted_ranges[i][1], -1*desc_sorted_ranges[i][0])
@@ -50,7 +54,8 @@ def func(interest_node, valid_birthday_nodes, graph_db):
 
     # get all people with connection to this interest node
     interest_node_id = interest_node["id"]
-    q1 = "START i=node:Interest('id:" + str(interest_node_id) + "') MATCH (n)-[r:HAS_INTEREST]->(i) return n"
+    q1 = "START i=node(" + str(interest_node._id) + ") MATCH (n)-[r:HAS_INTEREST]->(i) return n"
+    #q1 = "START i=node:Interest('id:" + str(interest_node_id) + "') MATCH (n)-[r:HAS_INTEREST]->(i) return n"
     res1 = list(neo4j.CypherQuery(graph_db, q1).execute())
 
     # add these people to a set
@@ -83,9 +88,10 @@ def bfs_per_node(start_person, final_people_nodes, graph_db):
 
     while len(connected_component_queue) > 0:
         next_node = connected_component_queue.pop(0)
-        node_id = next_node["id"]
-        q = "START n=node:People('id:" + str(node_id) + "')" \
-            "MATCH (n)-[r:KNOWS]->(t) RETURN t"
+        #node_id = next_node["id"]
+        #q = "START n=node:People('id:" + str(node_id) + "')" \
+        #    "MATCH (n)-[r:KNOWS]->(t) RETURN t"
+        q = "START n=node(" + str(next_node._id) + ") MATCH (n)-[r:KNOWS]->(t) RETURN t"
         res = list(neo4j.CypherQuery(graph_db, q).execute())
         all_neighbors = set()
         for entry in res:
@@ -109,4 +115,4 @@ def find_largest_connected_component(connected_components):
 
 
 if __name__ == '__main__':
-    main()
+    main(datetime.date(1981, 3, 10).toordinal(), 4)
