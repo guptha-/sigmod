@@ -61,9 +61,9 @@ def bfs(start_node, end_node, graph_db, k):
         next_node = queue.pop(0)  #remove 1st element
         if next_node["id"] == end_node["id"]:
             return paths[next_node]
-        node_id = next_node["id"]
-        q = "START n=node:People('id:" + str(node_id) + "')" \
-             "MATCH (n)-[r:KNOWS]->(t) RETURN t"
+        #node_id = next_node["id"]
+        q = "START n=node(" + str(next_node._id) + ") " \
+            "MATCH (n)-[r:KNOWS]->(t) RETURN t"
         res = neo4j.CypherQuery(graph_db, q).execute()
         all_neighbors = list(res)
         for n_node in all_neighbors:
@@ -81,16 +81,16 @@ def bfs(start_node, end_node, graph_db, k):
 
 def Is_Frequent_Communication_Edge(node1, node2, graph_db, k):
 
-    q1 = "START n=node:People('id:" + str(node1["id"]) + "'), t=node:People('id:" + str(node2["id"]) + "') " \
-         "MATCH (n)-[:COMMENTED]->(x)-[:REPLY_OF]->(y)<-[:COMMENTED]-(t) return count(x)"
+    q1 = "START n=node(" + str(node1._id) + "), t=node(" + str(node2._id) + ") MATCH " \
+         "(n)-[:COMMENTED]->(x)-[:REPLY_OF]->(y)<-[:COMMENTED]-(t) return count(x)"
     node1_comments = neo4j.CypherQuery(graph_db, q1).execute()
     ctr1 = list(node1_comments)[0][0]
 
     if ctr1 <= k:
         return False
 
-    q2 = "START n=node:People('id:" + str(node2["id"]) + "'), t=node:People('id:" + str(node1["id"]) + "') " \
-         "MATCH (n)-[:COMMENTED]->(x)-[:REPLY_OF]->(y)<-[:COMMENTED]-(t) return count(x)"
+    q2 = "START n=node(" + str(node2._id) + "), t=node(" + str(node1._id) + ") MATCH " \
+         "(n)-[:COMMENTED]->(x)-[:REPLY_OF]->(y)<-[:COMMENTED]-(t) return count(x)"
     node2_comments = neo4j.CypherQuery(graph_db, q2).execute()
     ctr2 = list(node2_comments)[0][0]
 
