@@ -2,6 +2,7 @@ __author__ = 'Saksham'
 
 from operator import itemgetter
 from py2neo import neo4j
+import time
 
 def main(k_str, hops_str, p):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
@@ -16,6 +17,7 @@ def main(k_str, hops_str, p):
     hops = int(hops_str)
 
     # get all nodes that have anything to do with Asia
+    start_time = time.clock()
     place_node = places.get("name", p)
     place_type = place_node[0]["type"]
     place_id = place_node[0]["id"]
@@ -48,7 +50,8 @@ def main(k_str, hops_str, p):
             final_couples.append((node1_id, node2_id, common_tags))
             ctr += 1
         iterator += 1
-
+    end_time = time.clock()
+    print "Time taken %s seconds..." % str(end_time-start_time)
     if final_couples.__len__() == 0:
         print "There are no pairs with a path between them"
     for (n1, n2, common_tags) in final_couples:
@@ -172,4 +175,4 @@ def Locate_people_given_place_id(place_id, graph_db):
 
 
 if __name__ == '__main__':
-    main(3,2,'Peru')
+    main(3, 2,'Asia')
