@@ -64,7 +64,7 @@ def main():
     batch.clear()
     end_time = time.clock()
     print "Created KNOWS edges in %s seconds...\n" % str(end_time - start_time)
-
+    return
     # #######################################################################
     #
     with open('../data/comment_hasCreator_person.csv') as res:

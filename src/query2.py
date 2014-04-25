@@ -17,7 +17,7 @@ def main(d_str, k_str):
 
     birthdays = graph_db.get_or_create_index(neo4j.Node, "Birthdays")
 
-    start_time  = time.clock()
+    start_time = time.clock()
     d = int(d_str)
     k = int(k_str)
     # get hold of all nodes with birthday > d
