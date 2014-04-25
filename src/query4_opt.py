@@ -14,8 +14,8 @@ def main():
 
     batch = neo4j.ReadBatch(graph_db)
 
-    k = 7
-    interest_tag_name = 'Tony_Blair'
+    k = 4
+    interest_tag_name = 'Augustine_of_Hippo'
 
     start_time = time.clock()
 
@@ -83,7 +83,7 @@ def main():
     sorted_node_centrality = sorted(node_centrality_map.items(), key=itemgetter(1, 0))
 
     end_time = time.clock()
-    time_taken = ((end_time - start_time)/60).__float__()
+    time_taken = (end_time - start_time)
 
     print "Time taken %s mins\n" % str(time_taken)
 
