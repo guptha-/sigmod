@@ -1,7 +1,6 @@
 __author__ = 'Saksham'
 
 from py2neo import neo4j
-import time
 
 person_comment_map = {}
 orig_reply_map = {}
@@ -16,9 +15,8 @@ def main(start_id_str, end_id_str, k_str):
     end_id = int(end_id_str)
     k = int(k_str)
 
-    start_time = time.clock()
     if k == -1:
-        q = "START n=node:People_TMP('id:" + str(start_id) + "'), t=node:People_TMP('id:" + str(
+        q = "START n=node:People('id:" + str(start_id) + "'), t=node:People('id:" + str(
             end_id) + "') MATCH p=shortestPath((n)-[:KNOWS*]->(t)) RETURN p"
         path = neo4j.CypherQuery(graph_db, q).execute()
         if len(path) > 0:
@@ -34,10 +32,10 @@ def main(start_id_str, end_id_str, k_str):
 
     else:
         load_hashes()
-        q1 = "START n=node:People_TMP('id:" + str(start_id) + "') return n"
+        q1 = "START n=node:People('id:" + str(start_id) + "') return n"
         res1 = neo4j.CypherQuery(graph_db, q1).execute()
         start_node = res1[0].n
-        q2 = "START n=node:People_TMP('id:" + str(end_id) + "') return n"
+        q2 = "START n=node:People('id:" + str(end_id) + "') return n"
         res2 = neo4j.CypherQuery(graph_db, q2).execute()
         end_node = res2[0].n
         path_final = bfs(start_node, end_node, graph_db, k)
@@ -51,8 +49,6 @@ def main(start_id_str, end_id_str, k_str):
         else:
             print "None\n"
         pass
-    end_time = time.clock()
-    print "Time taken %s seconds..." % str(end_time - start_time)
 
 
 def bfs(start_node, end_node, graph_db, k):
@@ -154,7 +150,7 @@ def Is_Frequent_Communication_Edge(node1, node2, graph_db, k):
         person1_comments_list = list(person1_comments)
         for c in person1_comments_list:
             if reply_of_edges.has_key(c) or c in reply_of_edges.values():
-                batch.get_or_create_in_index(neo4j.Node, "Comments_TMP", "id", c, {"id": c, "type": "Comment"})
+                batch.get_or_create_in_index(neo4j.Node, "Comments", "id", c, {"id": c, "type": "Comment"})
         xx = batch.submit()
         batch.clear()
         while len(xx) > 0:
@@ -167,7 +163,7 @@ def Is_Frequent_Communication_Edge(node1, node2, graph_db, k):
         person2_comments_list = list(person2_comments)
         for c in person2_comments_list:
             if reply_of_edges.has_key(c) or c in reply_of_edges.values():
-                batch.get_or_create_in_index(neo4j.Node, "Comments_TMP", "id", c, {"id": c, "type": "Comment"})
+                batch.get_or_create_in_index(neo4j.Node, "Comments", "id", c, {"id": c, "type": "Comment"})
         xx = batch.submit()
         batch.clear()
         while len(xx) > 0:

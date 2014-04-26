@@ -3,10 +3,9 @@ __author__ = 'Saksham'
 from py2neo import neo4j
 from operator import itemgetter
 import networkx as nx
-import time
 
 
-def main():
+def main(k_str, interest_tag_name):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
     people = graph_db.get_or_create_index(neo4j.Node, "People")
     interest_tags = graph_db.get_or_create_index(neo4j.Node, "Interest")
@@ -14,10 +13,7 @@ def main():
 
     batch = neo4j.ReadBatch(graph_db)
 
-    k = 4
-    interest_tag_name = 'Augustine_of_Hippo'
-
-    start_time = time.clock()
+    k = int(k_str)
 
     # get the tag node
     q1 = "START n=node:Interest('*:*') where n.name='" + interest_tag_name + "' RETURN n"
@@ -98,11 +94,6 @@ def main():
 
     sorted_node_centrality = sorted(node_centrality_map.items(), key=itemgetter(1, 0))
 
-    end_time = time.clock()
-    time_taken = end_time - start_time
-
-    print "Time taken %s seconds...\n" % str(time_taken)
-
     for i in range(0, k):
         print "%s-%s\n" % (str(sorted_node_centrality[i][0]), str(-1*sorted_node_centrality[i][1]))
 
@@ -110,4 +101,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main('7', 'Tony Blair')

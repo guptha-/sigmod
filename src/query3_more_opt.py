@@ -2,7 +2,6 @@ __author__ = 'Saksham'
 
 from operator import itemgetter
 from py2neo import neo4j
-import time
 
 
 def main(k_str, hops_str, p):
@@ -17,7 +16,6 @@ def main(k_str, hops_str, p):
     k = int(k_str)
     hops = int(hops_str)
 
-    start_time = time.clock()
     # get all nodes that have anything to do with Asia
     place_node = places.get("name", p)
     place_type = place_node[0]["type"]
@@ -55,8 +53,6 @@ def main(k_str, hops_str, p):
             ctr += 1
         iterator += 1
 
-    end_time = time.clock()
-    print "Time taken %s seconds..." % str(end_time-start_time)
     if final_couples.__len__() == 0:
         print "There are no pairs with a path between them"
     for (n1, n2, common_tags) in final_couples:

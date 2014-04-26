@@ -4,7 +4,7 @@ import sys
 import py2neo
 from operator import itemgetter
 from py2neo import neo4j, node, rel, cypher
-import datetime, time
+import datetime
 
 
 def main(d_str, k_str):
@@ -17,7 +17,6 @@ def main(d_str, k_str):
 
     birthdays = graph_db.get_or_create_index(neo4j.Node, "Birthdays")
 
-    start_time = time.clock()
     d = int(d_str)
     k = int(k_str)
     # get hold of all nodes with birthday > d
@@ -40,8 +39,6 @@ def main(d_str, k_str):
 
     desc_sorted_ranges = sorted(ranges_for_interests, key=itemgetter(0, 1))
 
-    end_time = time.clock()
-    print "Time takes %s seconds..." % str(end_time - start_time)
     print_str = ""
     for i in range(0, k):
         print_str += "=> %s-%d \n" % (desc_sorted_ranges[i][1], -1*desc_sorted_ranges[i][0])

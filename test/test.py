@@ -6,10 +6,10 @@ import datetime
 import filecmp
 import time
 
-from src import query1
+from src import query1_load_retrieve
 from src import query2
-from src import query3
-from src import query4
+from src import query3_more_opt
+from src import query4_more_opt
 from src import query4_opt
 import load_data
 
@@ -25,7 +25,7 @@ def main():
     q1 = getqueryargsmaybeminus("1k-sample-queries1.txt")
     for arg in q1:
         initindiv = time.time()
-        query1.main(arg[0], arg[1], arg[2])
+        query1_load_retrieve.main(arg[0], arg[1], arg[2])
         timerfile.write('Query 1 ' + arg[0] + ' ' + arg[1] + ' ' + arg[2] + ' time ' + str(time.time() - initindiv) \
                         + '\n')
     sys.stdout.close()
@@ -48,7 +48,7 @@ def main():
     q3 = getqueryargsmaybeminus("1k-sample-queries3.txt")
     for arg in q3:
         initindiv = time.time()
-        query3.main(arg[0], arg[1], arg[2])
+        query3_more_opt.main(arg[0], arg[1], arg[2])
         timerfile.write('Query 3 ' + arg[0] + ' ' + arg[1] + ' ' + arg[2] + ' time ' + str(time.time() - initindiv)
                         + '\n')
     sys.stdout.close()
@@ -59,7 +59,7 @@ def main():
     q4 = getqueryargsmaybeminus("1k-sample-queries4.txt")
     for arg in q4:
         initindiv = time.time()
-        query4_opt.main(arg[0], arg[1])
+        query4_more_opt.main(arg[0], arg[1])
         timerfile.write('Query 4 ' + arg[0] + ' ' + arg[1] + ' time ' + str(time.time() - initindiv) \
                         + '\n')
     sys.stdout.close()
