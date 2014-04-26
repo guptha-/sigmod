@@ -16,39 +16,15 @@ def main():
 
     batch = neo4j.WriteBatch(graph_db)
 
-    with open('../data/person.csv') as res:
-        content = res.read()
-        lines = content.split('\n')
-        lines = [x for x in lines if x is not '']
-        lines = lines[1:]
+    res = open("../data/person.csv", "r")
+    flag = True
+    for line in res:
+        line = line.rstrip('\n')
+        if flag or line is '':
+            flag = False
+            continue
 
-    with open('../data/person_hasInterest_tag.csv') as res:
-        content = res.read()
-        lines1 = content.split('\n')
-        lines1 = [x for x in lines1 if x is not '']
-        lines1 = lines1[1:]
-
-    unique_interest_tags = {}
-    for line in lines1:
-        parts = line.split('|')
-        pid = int(parts[0])
-        interest_id = int(parts[1])
-        if not unique_interest_tags.has_key(interest_id):
-            persons = [pid]
-            unique_interest_tags[interest_id] = persons
-        else:
-            unique_interest_tags[interest_id].append(pid)
-
-    # create tag nodes
-    for tag, persons in unique_interest_tags.items():
-        batch.get_or_create_in_index(neo4j.Node, "Interest", "id", tag, {"id": tag, "type": "Tag"})
-    batch.submit()
-    batch.clear()
-
-    add_names_of_interest_tags_to_nodes(batch, interest_tags)
-
-    # edit person nodes to add birth-dates
-    for line in lines:
+        # edit person nodes to add birth-dates
         parts = line.split('|')
         id = int(parts[0])
         date = parts[4].split('-')
@@ -64,7 +40,7 @@ def main():
         if node_ref.__len__() == 0:
             pass
             batch.get_or_create_in_index(neo4j.Node, "People", "id", id, {"id": id, "type": "Person"})
-            batch.run()
+            batch.submit()
             batch.clear()
             node_ref = people.get("id", id)
 
@@ -74,23 +50,53 @@ def main():
     batch.submit()
     batch.clear()
 
-    for tag, persons in unique_interest_tags.items():
+    unique_interest_tags = {}
+    res = open("../data/person_hasInterest_tag.csv", "r")
+    flag = True
+    for line in res:
+        line = line.rstrip('\n')
+        if flag or line is '':
+            flag = False
+            continue
+        parts = line.split('|')
+        pid = int(parts[0])
+        interest_id = int(parts[1])
+        if not unique_interest_tags.has_key(interest_id):
+            persons = [pid]
+            unique_interest_tags[interest_id] = persons
+            batch.get_or_create_in_index(neo4j.Node, "Interest", "id", interest_id, {"id": interest_id, "type": "Tag"})
+        else:
+            unique_interest_tags[interest_id].append(pid)
+
+    xx = batch.submit()
+    batch.clear()
+
+    readbatch = neo4j.ReadBatch(graph_db)
+    while len(xx) > 0:
+        v = xx.pop(0)
+        persons = unique_interest_tags[v["id"]]
         for person in persons:
-            person_node_ref = people.get("id", person)
-            tag_node_ref = interest_tags.get("id", tag)
-            batch.create(rel(person_node_ref[0], "HAS_INTEREST", tag_node_ref[0]))
+            readbatch.get_indexed_nodes("People", "id", person)
+
+        responses = readbatch.submit()
+        readbatch.clear()
+
+        for x in range(0, responses.__len__()):
+            batch.create(rel(responses[x][0], "HAS_INTEREST", v))
     batch.submit()
     batch.clear()
 
+    add_names_of_interest_tags_to_nodes(batch, interest_tags)
+
+
 def add_names_of_interest_tags_to_nodes(batch, interest_tags):
-
-    with open('../data/tag.csv') as res:
-        content = res.read()
-        lines = content.split('\n')
-        lines = [x for x in lines if x is not '']
-        lines = lines[1:]
-
-    for line in lines:
+    res = open("../data/tag.csv", "r")
+    flag = True
+    for line in res:
+        line = line.rstrip('\n')
+        if flag or line is '':
+            flag = False
+            continue
         parts = line.split('|')
         id = int(parts[0])
         name = parts[1]

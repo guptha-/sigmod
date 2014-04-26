@@ -2,7 +2,8 @@ __author__ = 'Saksham'
 
 from operator import itemgetter
 from py2neo import neo4j
-import time
+import numpy as np
+
 
 def main(k_str, hops_str, p):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
@@ -17,7 +18,6 @@ def main(k_str, hops_str, p):
     hops = int(hops_str)
 
     # get all nodes that have anything to do with Asia
-    start_time = time.clock()
     place_node = places.get("name", p)
     place_type = place_node[0]["type"]
     place_id = place_node[0]["id"]
@@ -32,7 +32,6 @@ def main(k_str, hops_str, p):
 
     elif place_type == 'continent':
         place_satisfying_people = Locate_continent_people(place_id, graph_db)
-
     person_interests_map = Get_interests_of_place_satisfiers(place_satisfying_people, graph_db)
 
     desc_sorted_interests = Rank_people_by_intersecting_interests(place_satisfying_people, person_interests_map)
@@ -41,17 +40,16 @@ def main(k_str, hops_str, p):
     ctr = 0
     iterator = 0
     while ctr < k:
-        if (iterator >= desc_sorted_interests.__len__()):
+        if iterator >= desc_sorted_interests.__len__():
             break
         node1_id = desc_sorted_interests[iterator][0]
         node2_id = desc_sorted_interests[iterator][1]
-        common_tags = -1*desc_sorted_interests[iterator][2]
+        common_tags = -1 * desc_sorted_interests[iterator][2]
         if path_exists(node1_id, node2_id, hops, graph_db):
             final_couples.append((node1_id, node2_id, common_tags))
             ctr += 1
         iterator += 1
-    end_time = time.clock()
-    print "Time taken %s seconds..." % str(end_time-start_time)
+
     if final_couples.__len__() == 0:
         print "There are no pairs with a path between them"
     for (n1, n2, common_tags) in final_couples:
@@ -62,7 +60,6 @@ def main(k_str, hops_str, p):
 
 
 def path_exists(node1_id, node2_id, hops, graph_db):
-
     q1 = "START n=node:People('id:" + str(node1_id) + "'), t=node:People('id:" + str(
         node2_id) + "') MATCH p=shortestPath((n)-[:KNOWS*.." + str(hops) + "]->(t)) RETURN p"
 
@@ -74,13 +71,13 @@ def path_exists(node1_id, node2_id, hops, graph_db):
 
 
 def Rank_people_by_intersecting_interests(place_satisfying_people, person_interests_map):
-
     end_nodes_interesecting_interests_map = []
 
     node_id_map = {}
     for person in place_satisfying_people:
         node_id_map[person] = person["id"]
     place_satisfying_people_list = sorted(node_id_map, key=lambda x: node_id_map[x])
+
 
     for i in range(0, len(place_satisfying_people_list)):
         p1 = place_satisfying_people_list[i]
@@ -95,17 +92,30 @@ def Rank_people_by_intersecting_interests(place_satisfying_people, person_intere
 
     return desc_sorted_interests
 
+
 def Get_interests_of_place_satisfiers(place_satisfying_people, graph_db):
     person_interests_map = {}
 
+    batch = neo4j.ReadBatch(graph_db)
     for person in place_satisfying_people:
         person_id = person["id"]
         q1 = "START n=node:People('id:" + str(person_id) + "') MATCH (n)-[:HAS_INTEREST]->(i) RETURN i"
-        interests_full = list(neo4j.CypherQuery(graph_db, q1).execute())
+        batch.append_cypher(q1)
+
+    responses = batch.submit()
+    batch.clear()
+
+    index = 0
+    for person in place_satisfying_people:
+        interests_full = responses[index]
         interests = set()
-        for interest in interests_full:
-            interests.add(interest.i)
+        if type(interests_full) is list:
+            for interest in interests_full:
+                interests.add(interest.i)
+        else:
+            interests.add(interests_full)
         person_interests_map[person] = interests
+        index += 1
 
     return person_interests_map
 
@@ -175,4 +185,4 @@ def Locate_people_given_place_id(place_id, graph_db):
 
 
 if __name__ == '__main__':
-    main(3, 2,'Asia')
+    main(4, 3, 'Taiwan')

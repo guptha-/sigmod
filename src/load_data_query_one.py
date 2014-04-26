@@ -42,7 +42,7 @@ def main():
     #     batch.get_or_create_in_index(neo4j.Node, "People", "id", key, {"id": key, "type": "Person"})
 
     del uniq_pids
-    batch.run()
+    batch.submit()
     batch.clear()
     print "Created people nodes . . .\n"
 

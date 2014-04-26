@@ -10,14 +10,14 @@ from src import query1
 from src import query2
 from src import query3
 from src import query4
-#from src import query4_opt
+from src import query4_opt
 import load_data
 
 
 def main():
     timerfile = open('currents/time', 'w')
     inittime = time.time()
-    #load_data.main(timerfile)
+    load_data.main(timerfile)
     timerfile.write("Total loading time " + str(time.time() - inittime) + '\n\n')
 
     initqfulltime = time.time()
@@ -45,21 +45,21 @@ def main():
 
     initqfulltime = time.time()
     sys.stdout = open('currents/q3out', 'w')
-    q3 = getqueryargsnominus("1k-sample-queries3.txt")
+    q3 = getqueryargsmaybeminus("1k-sample-queries3.txt")
     for arg in q3:
         initindiv = time.time()
         query3.main(arg[0], arg[1], arg[2])
-        timerfile.write('Query 3 ' + arg[0] + ' ' + arg[1] + ' ' + arg[2] + ' time ' + str(time.time() - initindiv) \
+        timerfile.write('Query 3 ' + arg[0] + ' ' + arg[1] + ' ' + arg[2] + ' time ' + str(time.time() - initindiv)
                         + '\n')
     sys.stdout.close()
     timerfile.write('Total q3 time ' + str(time.time() - initqfulltime) + '\n\n')
 
     initqfulltime = time.time()
     sys.stdout = open('currents/q4out', 'w')
-    q4 = getqueryargsnominus("1k-sample-queries4.txt")
+    q4 = getqueryargsmaybeminus("1k-sample-queries4.txt")
     for arg in q4:
         initindiv = time.time()
-        query4.main(arg[0], arg[1])
+        query4_opt.main(arg[0], arg[1])
         timerfile.write('Query 4 ' + arg[0] + ' ' + arg[1] + ' time ' + str(time.time() - initindiv) \
                         + '\n')
     sys.stdout.close()
@@ -84,7 +84,9 @@ def getqueryargsmaybeminus(filename):
     inputfile = open(filename)
     text = inputfile.readlines()
     for i, line in enumerate(text):
-        text[i] = re.findall(r"\w+|-\w+", line[6:])
+        line = line.replace(" ", "")
+        line = line[line.find("(")+1:line.find(")")]
+        text[i] = line.split(',')
     return text
 
 

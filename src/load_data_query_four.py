@@ -18,13 +18,13 @@ def main():
 
     batch2 = neo4j.ReadBatch(graph_db)
 
-    with open('../data/forum.csv') as res:
-        content = res.read()
-        lines = content.split('\n')
-        lines = [x for x in lines if x is not '']
-        lines = lines[1:]
-
-    for line in lines:
+    res = open("../data/forum.csv", "r")
+    flag = True
+    for line in res:
+        line = line.rstrip('\n')
+        if flag or line is '':
+            flag = False
+            continue
         parts = line.split('|')
         forum_id = int(parts[0])
         forum_title = parts[1]
@@ -35,13 +35,13 @@ def main():
     batch.clear()
 
     #create tag->forum edges
-    with open('../data/forum_hasTag_tag.csv') as res:
-        content = res.read()
-        lines = content.split('\n')
-        lines = [x for x in lines if x is not '']
-        lines = lines[1:]
-
-    for line in lines:
+    res = open("../data/forum_hasTag_tag.csv", "r")
+    flag = True
+    for line in res:
+        line = line.rstrip('\n')
+        if flag or line is '':
+            flag = False
+            continue
         parts = line.split('|')
         forum_id = int(parts[0])
         interest_tag_id = int(parts[1])
@@ -58,14 +58,15 @@ def main():
     batch.clear()
 
     # create people->forum edges
+    person_id_node_map = {}
+    forum_id_node_map = {}
+
     with open('../data/forum_hasMember_person.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
         lines = lines[1:]
 
-    person_id_node_map = {}
-    forum_id_node_map = {}
     for line in lines:
         parts = line.split('|')
         person_id = int(parts[1])

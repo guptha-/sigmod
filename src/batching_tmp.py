@@ -9,25 +9,23 @@ def main():
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
     #graph_db.clear()
 
-    graph_db.delete_index(neo4j.Node, "People_TMP")
-    graph_db.delete_index(neo4j.Node, "Comments_TMP")
+    #graph_db.delete_index(neo4j.Node, "People_TMP")
+    #graph_db.delete_index(neo4j.Node, "Comments_TMP")
     #graph_db.delete_index(neo4j.Node, "Reply_Edges_TMP")
 
-    people = graph_db.get_or_create_index(neo4j.Node, "People_TMP")
-    comments = graph_db.get_or_create_index(neo4j.Node, "Comments_TMP")
-    comment_reply_edges = graph_db.get_or_create_index(neo4j.Relationship, "Reply_Edges_TMP")
+    people = graph_db.get_or_create_index(neo4j.Node, "People")
+    comments = graph_db.get_or_create_index(neo4j.Node, "Comments")
+    comment_reply_edges = graph_db.get_or_create_index(neo4j.Relationship, "Reply_Edges")
 
     people_nodes = 0
 
     batch = neo4j.WriteBatch(graph_db)
-
 
     with open('../data/person_knows_person.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
         lines = lines[1:]
-
 
     tmp_people = set()
     start_time = time.clock()
@@ -38,8 +36,8 @@ def main():
         first = int(parts[0])
         second = int(parts[1])
 
-        batch.get_or_create_in_index(neo4j.Node, "People_TMP", "id", first, {"id": first, "type": "Person"})
-        batch.get_or_create_in_index(neo4j.Node, "People_TMP", "id", second, {"id": second, "type": "Person"})
+        batch.get_or_create_in_index(neo4j.Node, "People", "id", first, {"id": first, "type": "Person"})
+        batch.get_or_create_in_index(neo4j.Node, "People", "id", second, {"id": second, "type": "Person"})
 
         ctr += 1
         if ctr > 10000:
@@ -60,11 +58,11 @@ def main():
         v1 = xx.pop(0)
         v2 = xx.pop(0)
         batch.append_cypher("START n=node(" + str(v1._id) + "), t=node(" + str(v2._id) + ") CREATE (n)-[:KNOWS]->(t)")
-    batch.run()
+    batch.submit()
     batch.clear()
     end_time = time.clock()
     print "Created KNOWS edges in %s seconds...\n" % str(end_time - start_time)
-    return
+
     # #######################################################################
     #
     with open('../data/comment_hasCreator_person.csv') as res:
@@ -81,8 +79,8 @@ def main():
         cid = int(parts[0])
         pid = int(parts[1])
 
-        batch.get_or_create_in_index(neo4j.Node, "People_TMP", "id", pid, {"id": pid, "type": "Person"})
-        batch.get_or_create_in_index(neo4j.Node, "Comments_TMP", "id", cid, {"id": cid, "type": "Comment"})
+        batch.get_or_create_in_index(neo4j.Node, "People", "id", pid, {"id": pid, "type": "Person"})
+        batch.get_or_create_in_index(neo4j.Node, "Comments", "id", cid, {"id": cid, "type": "Comment"})
         ctr += 1
         if ctr > 10000:
             xx = batch.submit()
@@ -121,8 +119,8 @@ def main():
         parts = line.split('|')
         reply = int(parts[0])
         original = int(parts[1])
-        batch.get_or_create_in_index(neo4j.Node, "Comments_TMP", "id", reply, {"id": reply, "type": "Comment"})
-        batch.get_or_create_in_index(neo4j.Node, "Comments_TMP", "id", original, {"id": original, "type": "Comment"})
+        batch.get_or_create_in_index(neo4j.Node, "Comments", "id", reply, {"id": reply, "type": "Comment"})
+        batch.get_or_create_in_index(neo4j.Node, "Comments", "id", original, {"id": original, "type": "Comment"})
         ctr += 1
         if ctr > 10000:
             xx = batch.submit()
