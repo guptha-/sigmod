@@ -1,0 +1,3 @@
+query3(3, 2, Asia)
+query3(4, 3, Dolgoprudny)
+query3(3, 2, Yongkang_District)
