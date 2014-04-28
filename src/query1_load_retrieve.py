@@ -80,31 +80,40 @@ def bfs(start_node, end_node, graph_db, k):
 
 def load_hashes():
      with open('../data/comment_hasCreator_person.csv') as res:
-        lines = res.readlines()
-        lines = lines[1:]
-     for line in lines:
-        parts = line.strip('\n').split('|')
-        cid = int(parts[0])
-        pid = int(parts[1])
-        if not person_comment_map.has_key(pid):
-            person_comment_map[pid] = [cid]
-        else:
-            person_comment_map[pid].append(cid)
+        ctr = 0
+        for line in res:
+            if ctr == 0:
+                ctr = 1
+                continue
+        #lines = res.readlines()
+        #lines = lines[1:]
+            parts = line.strip('\n').split('|')
+            cid = int(parts[0])
+            pid = int(parts[1])
+            if not person_comment_map.has_key(pid):
+                person_comment_map[pid] = [cid]
+            else:
+                person_comment_map[pid].append(cid)
      pass
 
+     ctr = 0
      with open('../data/comment_replyOf_comment.csv') as res:
-        lines = res.readlines()
-        lines = lines[1:]
-     for line in lines:
-        parts = line.strip('\n').split('|')
-        reply = int(parts[0])
-        orig = int(parts[1])
-        if not orig_reply_map.has_key(orig):
-            rset = set()
-            rset.add(reply)
-            orig_reply_map[orig] = rset
-        else:
-            orig_reply_map[orig].add(reply)
+        for line in res:
+            if ctr == 0:
+                ctr = 1
+                continue
+        #lines = res.readlines()
+        #lines = lines[1:]
+     #for line in lines:
+            parts = line.strip('\n').split('|')
+            reply = int(parts[0])
+            orig = int(parts[1])
+            if not orig_reply_map.has_key(orig):
+                rset = set()
+                rset.add(reply)
+                orig_reply_map[orig] = rset
+            else:
+                orig_reply_map[orig].add(reply)
      print "Loaded hashes . . ."
      pass
 
