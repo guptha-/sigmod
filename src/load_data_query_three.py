@@ -4,7 +4,7 @@ from py2neo import neo4j, node, rel, cypher
 import datetime
 
 
-def main():
+def main(querydir):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
 
     people = graph_db.get_or_create_index(neo4j.Node, "People")
@@ -13,7 +13,7 @@ def main():
 
     batch = neo4j.WriteBatch(graph_db)
 
-    res = open("../data/place.csv", "r")
+    res = open("../data/" + querydir + "/place.csv", "r")
     flag = True
     for line in res:
         line = line.rstrip('\n')
@@ -34,16 +34,18 @@ def main():
     res.close()
     xx = batch.submit()
     batch.clear()
+    print "Done place load"
 
     while len(xx) > 0:
         v = xx.pop(0)
         batch.add_indexed_node("Place", "name", str(v["name"]), v)
     batch.submit()
     batch.clear()
+    print "Done place index"
 
     ###########################################################################
     readbatch = neo4j.ReadBatch(graph_db)
-    res = open("../data/place_isPartOf_place.csv", "r")
+    res = open("../data/" + querydir + "/place_isPartOf_place.csv", "r")
     flag = True
     for line in res:
         line = line.rstrip('\n')
@@ -68,9 +70,10 @@ def main():
 
     batch.submit()
     batch.clear()
+    print "Done placeispartof load"
 
     #####################################################################################
-    res = open("../data/person_isLocatedIn_place.csv", "r")
+    res = open("../data/" + querydir + "/person_isLocatedIn_place.csv", "r")
     flag = True
     for line in res:
         line = line.rstrip('\n')
@@ -94,6 +97,7 @@ def main():
 
     batch.submit()
     batch.clear()
+    print "Done person located in load"
 
     ####################################################################################
 
@@ -101,7 +105,7 @@ def main():
     person_work_org_map = {}
     org_place_map = {}
 
-    res = open("../data/organisation_isLocatedIn_place.csv", "r")
+    res = open("../data/" + querydir + "/organisation_isLocatedIn_place.csv", "r")
     flag = True
     for line in res:
         line = line.rstrip('\n')
@@ -112,8 +116,10 @@ def main():
         org_id = int(parts[0])
         place_id = int(parts[1])
         org_place_map[org_id] = place_id
+    res.close()
+    print "Done org is located in load"
 
-    res = open("../data/person_studyAt_organisation.csv", "r")
+    res = open("../data/" + querydir + "/person_studyAt_organisation.csv", "r")
     flag = True
     for line in res:
         line = line.rstrip('\n')
@@ -124,7 +130,7 @@ def main():
         person_id = int(parts[0])
         study_org_id = int(parts[1])
         person_study_org_map[person_id] = study_org_id
-
+    res.close()
     # Have to use a separate loop here because of duplicates (I think!)
     for person, study_org in person_study_org_map.items():
         study_org_place = org_place_map[study_org]
@@ -141,8 +147,9 @@ def main():
 
     batch.submit()
     batch.clear()
+    print "Done studied in load"
 
-    res = open("../data/person_workAt_organisation.csv", "r")
+    res = open("../data/" + querydir + "/person_workAt_organisation.csv", "r")
     flag = True
     for line in res:
         line = line.rstrip('\n')
@@ -153,6 +160,7 @@ def main():
         person_id = int(parts[0])
         work_org_id = int(parts[1])
         person_work_org_map[person_id] = work_org_id
+    res.close()
 
     # Have to use a separate loop here because of duplicates (I think!)
     for person, work_org in person_work_org_map.items():
@@ -170,6 +178,7 @@ def main():
 
     batch.submit()
     batch.clear()
+    print "Done work in load"
 
 if __name__ == '__main__':
-    main()
+    main("1k")

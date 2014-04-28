@@ -5,7 +5,7 @@ from py2neo import neo4j, node, rel, cypher
 import time
 
 
-def main():
+def main(querydir):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
     #graph_db.clear()
 
@@ -21,7 +21,7 @@ def main():
 
     batch = neo4j.WriteBatch(graph_db)
 
-    with open('../data/person_knows_person.csv') as res:
+    with open('../data/' + querydir + '/person_knows_person.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -62,11 +62,10 @@ def main():
     batch.clear()
     end_time = time.clock()
     print "Created KNOWS edges in %s seconds...\n" % str(end_time - start_time)
-
     return
     # #######################################################################
     #
-    with open('../data/comment_hasCreator_person.csv') as res:
+    with open('../data/' + querydir + '/comment_hasCreator_person.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -107,7 +106,7 @@ def main():
 
     #######################################################################
 
-    with open('../data/comment_replyOf_comment.csv') as res:
+    with open('../data/' + querydir + '/comment_replyOf_comment.csv') as res:
         content = res.read()
         lines = content.split('\n')
         lines = [x for x in lines if x is not '']
@@ -149,4 +148,4 @@ def main():
     pass
 
 if __name__ == '__main__':
-    main()
+    main("1k")

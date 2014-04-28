@@ -2,10 +2,8 @@ __author__ = 'Saksham'
 
 from py2neo import neo4j
 
-person_comment_map = {}
-orig_reply_map = {}
 
-def main(start_id_str, end_id_str, k_str):
+def main(start_id_str, end_id_str, k_str, querydir):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
 
     people = graph_db.get_or_create_index(neo4j.Node, "People")
@@ -31,14 +29,16 @@ def main(start_id_str, end_id_str, k_str):
         pass
 
     else:
-        load_hashes()
+        orig_reply_map = {}
+        person_comment_map = {}
+        load_hashes(person_comment_map, orig_reply_map, querydir)
         q1 = "START n=node:People('id:" + str(start_id) + "') return n"
         res1 = neo4j.CypherQuery(graph_db, q1).execute()
         start_node = res1[0].n
         q2 = "START n=node:People('id:" + str(end_id) + "') return n"
         res2 = neo4j.CypherQuery(graph_db, q2).execute()
         end_node = res2[0].n
-        path_final = bfs(start_node, end_node, graph_db, k)
+        path_final = bfs(person_comment_map, orig_reply_map, start_node, end_node, graph_db, k)
 
         print_string = ""
         if path_final is not None:
@@ -51,7 +51,7 @@ def main(start_id_str, end_id_str, k_str):
         pass
 
 
-def bfs(start_node, end_node, graph_db, k):
+def bfs(person_comment_map, orig_reply_map, start_node, end_node, graph_db, k):
     queue = list()
     paths = {}
     queue.append(start_node)
@@ -68,7 +68,7 @@ def bfs(start_node, end_node, graph_db, k):
         for n_node in all_neighbors:
             neighbor = n_node.t
             if not paths.has_key(neighbor):
-                if Is_Frequent_Communication_Edge(next_node, neighbor, graph_db, k):
+                if Is_Frequent_Communication_Edge(person_comment_map, orig_reply_map, next_node, neighbor, graph_db, k):
                     queue.append(neighbor)
                     paths[neighbor] = list(paths[next_node])
                     paths[neighbor].append(neighbor)
@@ -78,15 +78,16 @@ def bfs(start_node, end_node, graph_db, k):
                 pass
     return None  # no frequent communication path exists
 
-def load_hashes():
-     with open('../data/comment_hasCreator_person.csv') as res:
+
+def load_hashes(person_comment_map, orig_reply_map, querydir):
+    with open('../data/' + querydir + '/comment_hasCreator_person.csv') as res:
         ctr = 0
         for line in res:
             if ctr == 0:
                 ctr = 1
                 continue
-        #lines = res.readlines()
-        #lines = lines[1:]
+                #lines = res.readlines()
+                #lines = lines[1:]
             parts = line.strip('\n').split('|')
             cid = int(parts[0])
             pid = int(parts[1])
@@ -94,17 +95,17 @@ def load_hashes():
                 person_comment_map[pid] = [cid]
             else:
                 person_comment_map[pid].append(cid)
-     pass
+    pass
 
-     ctr = 0
-     with open('../data/comment_replyOf_comment.csv') as res:
+    ctr = 0
+    with open('../data/' + querydir + '/comment_replyOf_comment.csv') as res:
         for line in res:
             if ctr == 0:
                 ctr = 1
                 continue
-        #lines = res.readlines()
-        #lines = lines[1:]
-     #for line in lines:
+                #lines = res.readlines()
+                #lines = lines[1:]
+                #for line in lines:
             parts = line.strip('\n').split('|')
             reply = int(parts[0])
             orig = int(parts[1])
@@ -114,11 +115,10 @@ def load_hashes():
                 orig_reply_map[orig] = rset
             else:
                 orig_reply_map[orig].add(reply)
-     print "Loaded hashes . . ."
-     pass
+    pass
 
 
-def Is_Frequent_Communication_Edge(node1, node2, graph_db, k):
+def Is_Frequent_Communication_Edge(person_comment_map, orig_reply_map, node1, node2, graph_db, k):
     person1 = node1["id"]
     person2 = node2["id"]
     # fetch comment node ids for node1, from CSV
@@ -215,4 +215,4 @@ def Is_Frequent_Communication_Edge(node1, node2, graph_db, k):
 
 
 if __name__ == '__main__':
-    main(814, 641, 0)
+    main(9858, 1587, 1, '10k')

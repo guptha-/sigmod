@@ -5,7 +5,7 @@ import datetime
 from datetime import date
 
 
-def main():
+def main(querydir):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
 
     people = graph_db.get_or_create_index(neo4j.Node, "People")
@@ -16,7 +16,7 @@ def main():
 
     batch = neo4j.WriteBatch(graph_db)
 
-    res = open("../data/person.csv", "r")
+    res = open("../data/" + querydir + "/person.csv", "r")
     flag = True
     for line in res:
         line = line.rstrip('\n')
@@ -47,11 +47,13 @@ def main():
         batch.set_property(node_ref[0], "birthday", absolute_day)
         batch.add_indexed_node("Birthdays", "birthday", absolute_day, node_ref[0])
 
+    res.close()
     batch.submit()
     batch.clear()
+    print "Done person load"
 
     unique_interest_tags = {}
-    res = open("../data/person_hasInterest_tag.csv", "r")
+    res = open("../data/" + querydir + "/person_hasInterest_tag.csv", "r")
     flag = True
     for line in res:
         line = line.rstrip('\n')
@@ -68,8 +70,10 @@ def main():
         else:
             unique_interest_tags[interest_id].append(pid)
 
+    res.close()
     xx = batch.submit()
     batch.clear()
+    print "Done has interest load"
 
     readbatch = neo4j.ReadBatch(graph_db)
     while len(xx) > 0:
@@ -85,12 +89,13 @@ def main():
             batch.create(rel(responses[x][0], "HAS_INTEREST", v))
     batch.submit()
     batch.clear()
+    print "Done has interest link"
 
-    add_names_of_interest_tags_to_nodes(batch, interest_tags)
+    add_names_of_interest_tags_to_nodes(batch, interest_tags, querydir)
 
 
-def add_names_of_interest_tags_to_nodes(batch, interest_tags):
-    res = open("../data/tag.csv", "r")
+def add_names_of_interest_tags_to_nodes(batch, interest_tags, querydir):
+    res = open("../data/" + querydir + "/tag.csv", "r")
     flag = True
     for line in res:
         line = line.rstrip('\n')
@@ -106,8 +111,10 @@ def add_names_of_interest_tags_to_nodes(batch, interest_tags):
         if i_node.__len__() > 0:
             batch.set_property(i_node[0], "name", name)
 
+    res.close()
     batch.submit()
     batch.clear()
+    print "Done add names to int tags"
 
 if __name__ == '__main__':
-    main()
+    main("1k")

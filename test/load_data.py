@@ -9,28 +9,28 @@ from src import batching_tmp
 import time
 
 
-def main(timerfile):
+def main(timerfile, querydir):
 
     initindiv = time.time()
-    batching_tmp.main()
+    batching_tmp.main(querydir)
     timerfile.write('Loading Query 1 time ' + str(time.time() - initindiv) + '\n')
     print "Load 1 done"
 
     initindiv = time.time()
-    load_data_query_two.main()
+    load_data_query_two.main(querydir)
     timerfile.write('Loading Query 2 time ' + str(time.time() - initindiv) + '\n')
     print "Load 2 done"
 
     initindiv = time.time()
-    load_data_query_three.main()
+    load_data_query_three.main(querydir)
     timerfile.write('Loading Query 3 time ' + str(time.time() - initindiv) + '\n')
     print "Load 3 done"
 
     initindiv = time.time()
-    load_data_query_four.main()
+    load_data_query_four.main(querydir)
     timerfile.write('Loading Query 4 time ' + str(time.time() - initindiv) + '\n')
     print "Load 4 done"
 
 
 if __name__ == '__main__':
-    main(open('currents/time', 'w'))
+    main(open('currents/time', 'w'), "1k")

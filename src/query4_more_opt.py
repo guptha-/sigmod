@@ -5,22 +5,22 @@ from operator import itemgetter
 import networkx as nx
 
 
-def main(k_str, interest_tag_name):
+def main(k_str, interest_tag_name, querydir):
     graph_db = neo4j.GraphDatabaseService("http://localhost:7474/db/data/")
-    people = graph_db.get_or_create_index(neo4j.Node, "People_med")
-    interest_tags = graph_db.get_or_create_index(neo4j.Node, "Interest_med")
-    forums = graph_db.get_or_create_index(neo4j.Node, "Forum_med")
+    people = graph_db.get_or_create_index(neo4j.Node, "People")
+    interest_tags = graph_db.get_or_create_index(neo4j.Node, "Interest")
+    forums = graph_db.get_or_create_index(neo4j.Node, "Forum")
 
     batch = neo4j.ReadBatch(graph_db)
 
     k = int(k_str)
 
     # get the tag node
-    q1 = "START n=node:Interest_med('*:*') where n.name='" + interest_tag_name + "' RETURN n"
+    q1 = "START n=node:Interest('*:*') where n.name='" + interest_tag_name + "' RETURN n"
     tag_node_list = list(neo4j.CypherQuery(graph_db, q1).execute())
     tag_node = tag_node_list[0].n
 
-    load_interest_forum_edges(tag_node, graph_db)
+    load_interest_forum_edges(tag_node, graph_db, querydir)
 
     #q2 = "START n=node:Interest('id:" + str(tag_node["id"]) + "') MATCH (n)-[:IS_PRESENT_IN]->(t) RETURN t"
     q2 = "START n=node(" + str(tag_node._id) + ") MATCH (n)-[:IS_PRESENT_IN]->(t) RETURN t"
@@ -29,7 +29,7 @@ def main(k_str, interest_tag_name):
     for node in forum_node_list:
         valid_forum_nodes.append(node.t)
 
-    load_forum_member_edges(valid_forum_nodes, graph_db)
+    load_forum_member_edges(valid_forum_nodes, graph_db, querydir)
 
     # get people who are members of these forums
     valid_people_nodes = set()
@@ -102,7 +102,7 @@ def main(k_str, interest_tag_name):
 
     pass
 
-def load_forum_member_edges(valid_forum_nodes, graph_db):
+def load_forum_member_edges(valid_forum_nodes, graph_db, querydir):
 
     wr_batch = neo4j.WriteBatch(graph_db)
     rd_batch = neo4j.ReadBatch(graph_db)
@@ -113,7 +113,7 @@ def load_forum_member_edges(valid_forum_nodes, graph_db):
 
     #forum_nodes_list = []
     flag = False
-    with open('../data/forum_hasMember_person.csv') as res:
+    with open('../data/' + querydir + '/forum_hasMember_person.csv') as res:
         ctr = 0
         for line in res:
             if not flag:
@@ -123,8 +123,8 @@ def load_forum_member_edges(valid_forum_nodes, graph_db):
             fid = int(parts[0])
             pid = int(parts[1])
             if fid in valid_forum_node_ids:
-                rd_batch.get_indexed_nodes("People_med", "id", pid)
-                rd_batch.get_indexed_nodes("Forum_med", "id", fid)
+                rd_batch.get_indexed_nodes("People", "id", pid)
+                rd_batch.get_indexed_nodes("Forum", "id", fid)
                 ctr += 1
                 if ctr == 10000:
                     results = rd_batch.submit()
@@ -151,10 +151,10 @@ def load_forum_member_edges(valid_forum_nodes, graph_db):
     wr_batch.clear()
     #print "Done loads..."
 
-def load_interest_forum_edges(tag_node, graph_db):
+def load_interest_forum_edges(tag_node, graph_db, querydir):
 
     wr_batch = neo4j.WriteBatch(graph_db)
-    with open("../data/forum_hasTag_tag.csv", "r") as res:
+    with open("../data/" + querydir + "/forum_hasTag_tag.csv", "r") as res:
         ctr = 0
         for line in res:
             if ctr == 0:
@@ -164,7 +164,7 @@ def load_interest_forum_edges(tag_node, graph_db):
             fid = int(parts[0])
             iid = int(parts[1])
             if iid == tag_node["id"]:
-                wr_batch.get_or_create_in_index(neo4j.Node, "Forum_med", "id", fid, {"id": fid})
+                wr_batch.get_or_create_in_index(neo4j.Node, "Forum", "id", fid, {"id": fid})
     result = wr_batch.submit()
     wr_batch.clear()
 
@@ -175,4 +175,4 @@ def load_interest_forum_edges(tag_node, graph_db):
     wr_batch.clear()
 
 if __name__ == '__main__':
-    main('4', 'Napoleon')
+    main('4', 'Napoleon', '1k')
